@@ -53,6 +53,37 @@ Here is a complete example showing worker setup and two jobs enqueued, one with 
         return nil
     }
 
+    type rescheduleArgs struct {
+        Name  string
+        Count int
+    }
+
+    rescheduleExample := func(j *que.Job) error {
+        var args rescheduleArgs
+        if err := json.Unmarshal(j.Args, &args); err != nil {
+            return err
+        }
+
+        // do something here
+        fmt.Printf("Hello %s!\n", args.Name)
+
+        if args.Count < 5 {
+
+            // bump the args
+            args.Count++
+
+            // convert back to json
+            args, err := json.Marshal(args)
+            if err != nil {
+                return error
+            }
+            j.Args = args
+            j.Reschedule(time.Now().Add(1 * time.Day))
+        }
+
+        return nil
+    }
+
     pgxcfg, err := pgx.ParseURI(os.Getenv("DATABASE_URL"))
     if err != nil {
         log.Fatal(err)
@@ -70,9 +101,16 @@ Here is a complete example showing worker setup and two jobs enqueued, one with 
     qc := que.NewClient(pgxpool)
     wm := que.WorkMap{
         "PrintName": printName,
+        "RescheduleExample": rescheduleExample,
     }
     workers := que.NewWorkerPool(qc, wm, 2) // create a pool w/ 2 workers
     go workers.Start() // work jobs in another goroutine
+
+    //
+    // Job Example
+    // This example handles the job and the worker automatically
+    // deletes the job from the queue if no errors are returned
+    //
 
     args, err := json.Marshal(printNameArgs{Name: "bgentry"})
     if err != nil {
@@ -96,7 +134,29 @@ Here is a complete example showing worker setup and two jobs enqueued, one with 
         log.Fatal(err)
     }
 
-    time.Sleep(35 * time.Second) // wait for while
+    //
+    // Reschedule Job Example
+    // This example updates the job.Args.Count and
+    // changes the RunAt to the next day. If the job returns
+    // an error, the job is updated with the last error and the
+    // the ErrorCount is bumped. Otherwise, the job is updated
+    // with the modified fields...
+    //
+
+    args, err := json.Marshal(rescheduleArgs{Name: "bgentry", Count: 0})
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    j := &que.Job{
+        Type:  "RescheduleExample",
+        Args:  args,
+    }
+    if err := qc.Enqueue(j); err != nil {
+        log.Fatal(err)
+    }
+
+    time.Sleep(60 * time.Second) // wait for while
 
     workers.Shutdown()
 
