@@ -122,9 +122,10 @@ func (w *Worker) WorkOne() (didWork bool) {
 		return
 	}
 
-	if err = j.Delete(); err != nil {
-		log.Printf("attempting to delete job %d: %v", j.ID, err)
+	if err = j.Finalize(); err != nil {
+		log.Printf("attempting to finalize job %d: %v", j.ID, err)
 	}
+
 	log.Printf("event=job_worked job_id=%d job_type=%s", j.ID, j.Type)
 	return
 }
