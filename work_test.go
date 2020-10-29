@@ -686,8 +686,10 @@ func TestJobUpdate(t *testing.T) {
 	if string(j.Args) != string(j2.Args) {
 		t.Fatal("expected updated job with new args")
 	}
-
-	if j.RunAt.UTC() != j2.RunAt.UTC() {
+	// use epoch seconds to compare, since we might've
+	// ended up with a monotonic date or extra precission
+	// on the milliseconds
+	if j.RunAt.Unix() != j2.RunAt.Unix() {
 		t.Fatal("expected updated job with new runAt")
 	}
 
@@ -765,8 +767,10 @@ func TestJobErrorUpdate(t *testing.T) {
 	if j3.LastError.Status != pgtype.Null {
 		t.Fatal("expected updated job with no last error")
 	}
-
-	if j2.RunAt.UTC() != j3.RunAt.UTC() {
+	// use epoch seconds to compare, since we might've
+	// ended up with a monotonic date or extra precission
+	// on the milliseconds
+	if j2.RunAt.Unix() != j3.RunAt.Unix() {
 		t.Fatal("expected updated job with new runAt")
 	}
 
