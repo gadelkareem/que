@@ -664,11 +664,12 @@ func TestJobUpdate(t *testing.T) {
 	j.Done()
 
 	j2, err := findOneJob(c.pool)
-	defer j2.Done()
-
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	fmt.Printf("j: %+v\n", j)
+	fmt.Printf("j2: %+v\n", j2)
 
 	if j2 == nil {
 		t.Fatal("wanted updated job, got none")
@@ -719,7 +720,7 @@ func TestJobErrorUpdate(t *testing.T) {
 
 	// delay so lock job picks
 	// up the previous job
-	time.Sleep(4 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	// use lock job here so we pick up
 	// the job.pool and conn for the update
@@ -749,11 +750,12 @@ func TestJobErrorUpdate(t *testing.T) {
 	j2.Done()
 
 	j3, err := findOneJob(c.pool)
-	defer j3.Done()
-
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	fmt.Printf("j2: %+v\n", j2)
+	fmt.Printf("j3: %+v\n", j3)
 
 	// error count should be 0 and lasterror null
 	if j3.ErrorCount != 0 {
