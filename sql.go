@@ -54,7 +54,7 @@ WITH RECURSIVE jobs AS (
     ) AS t1
   )
 )
-SELECT queue, priority, run_at, job_id, job_class, args, error_count
+SELECT queue, priority, run_at, job_id, job_class, args, error_count, last_error
 FROM jobs
 WHERE locked
 LIMIT 1
@@ -89,6 +89,20 @@ INSERT INTO que_jobs
 (queue, priority, run_at, job_class, args)
 VALUES
 (coalesce($1::text, ''::text), coalesce($2::smallint, 100::smallint), coalesce($3::timestamptz, now()::timestamptz), $4::text, coalesce($5::json, '[]'::json))
+`
+
+	sqlUpdateJob = `
+UPDATE que_jobs
+SET
+    priority    = $2::smallint,
+    run_at      = $3::timestamptz,
+    job_class   = $4::text,
+    args        = coalesce($5::json, '[]'::json),
+    error_count = $6::integer,
+    last_error  = $7::text,
+    queue       = $8::text
+
+ WHERE job_id   = $1::bigint
 `
 
 	sqlDeleteJob = `
