@@ -668,9 +668,6 @@ func TestJobUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fmt.Printf("j: %+v\n", j)
-	fmt.Printf("j2: %+v\n", j2)
-
 	if j2 == nil {
 		t.Fatal("wanted updated job, got none")
 	}
@@ -755,9 +752,6 @@ func TestJobErrorUpdate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	fmt.Printf("j2: %+v\n", j2)
-	fmt.Printf("j3: %+v\n", j3)
 
 	// error count should be 0 and lasterror null
 	if j3.ErrorCount != 0 {
