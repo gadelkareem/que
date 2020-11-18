@@ -1,6 +1,6 @@
 # que
 
-[![GoDoc](https://godoc.org/github.com/bgentry/que?status.svg)][godoc] [![Build Status](https://travis-ci.org/gadelkareem/que.svg?branch=master)](https://travis-ci.org/gadelkareem/que)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/gadelkareem/que)](https://pkg.go.dev/github.com/gadelkareem/que) [![Build Status](https://travis-ci.org/gadelkareem/que.svg?branch=master)](https://travis-ci.org/gadelkareem/que)
 
 que is a fully interoperable Golang port of [Chris Hanks][chanks]' [Ruby Que
 queuing library][ruby-que] for PostgreSQL. Que uses PostgreSQL's advisory locks
@@ -24,9 +24,8 @@ we'd have to implement our own connection pool. Fortunately, pgx already has a
 perfectly usable one built for us. Even better, it offers better performance
 than pq due largely to its use of binary encoding.
 
-Please see the [godocs][godoc] for more info and examples.
+Please see the [![PkgGoDev](https://pkg.go.dev/badge/github.com/gadelkareem/que)](https://pkg.go.dev/github.com/gadelkareem/que) for more info and examples.
 
-[godoc]: https://godoc.org/github.com/bgentry/que
 [chanks]: https://github.com/chanks
 [ruby-que]: https://github.com/chanks/que
 [pgx]: https://github.com/jackc/pgx
